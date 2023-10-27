@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload File</title>
+</head>
+<body>
+    <h2>Upload File</h2>
+    <form action="/api/userpages/upload" method="post" enctype="multipart/form-data">
+        <!-- Dosya türünü seçmek için bir dropdown -->
+        <label for="type">File Type:</label>
+        <select name="type" id="type" required>
+            <option value="video">Video</option>
+            <option value="image">Image</option>
+            <option value="message">Message</option>
+        </select>
+        <br><br>
+
+        <!-- Dosya açıklaması için bir input alanı -->
+        <label for="description">Description:</label>
+        <input type="text" id="description" name="description">
+        <br><br>
+
+        <!-- Dosya yüklemek için bir file input alanı -->
+        <label for="file">Choose a file:</label>
+        <input type="file" id="file" name="file" required>
+        <br><br>
+
+        <input type="submit" value="Upload">
+    </form>
+
+    <script src="upload.js"></script>
+</body>
+</html>
