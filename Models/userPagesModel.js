@@ -25,3 +25,5 @@ const userPageSchema = new mongoose.Schema({
 const UserPage = mongoose.model('UserPage', userPageSchema);
 
 module.exports = UserPage;
+
+
