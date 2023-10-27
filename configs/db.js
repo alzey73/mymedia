@@ -1,7 +1,8 @@
 const mongoose = require('mongoose');
+require("dotenv").config();
 
-const username = "seozoglu";
-const password = "13579";
+const username = process.env.MONGO_USERNAME;
+const password = process.env.MONGO_PASSWORD;
 
 
 const connectionString = `mongodb+srv://${username}:${password}@luster0.kwi7qy7.mongodb.net/?retryWrites=true&w=majority`;
