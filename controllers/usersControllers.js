@@ -37,6 +37,7 @@ exports.createUser = async (req, res) => {
 exports.login = async (req, res) => {
     try {
         const { email, password } = req.body;
+        const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
 
         // Kullanıcıyı bul
         const user = await User.findOne({ email: email });

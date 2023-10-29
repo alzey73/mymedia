@@ -6,7 +6,7 @@ exports.getUserFiles = async (req, res) => {
     try {
         const userId = req.user.userId; // JWT middleware ile eklenen user bilgisi
         const userFiles = await UserPage.find({ userId: userId });
-        console.log("userid",userId);
+        // console.log("userid",userId);
        if (userFiles.length === 0) {
             res.status(200).json({ message: "No files found for this user.", files: [] });
         } else {

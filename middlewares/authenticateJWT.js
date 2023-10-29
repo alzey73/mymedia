@@ -18,7 +18,7 @@ function authenticateJWT(req,res,next){
             return res.sendStatus(403);
         }
        req.user=decoded;
-       console.log("Decoded JWT:", req.user);
+    //    console.log("Decoded JWT:", req.user);
         next();
     });
 }
