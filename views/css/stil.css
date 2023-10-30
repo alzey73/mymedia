@@ -1,0 +1,5 @@
+.custom-position {
+    position: absolute;
+    top: 50px;  /* 50px aşağı */
+    left: 50px; /* 50px sağa */
+}

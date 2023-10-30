@@ -10,6 +10,7 @@ const initializeSockets=require("./configs/socketConfig");
 
 const usersRouter=require("./routers/usersRouter");
 const userPagesRouter=require("./routers/userPagesRouter");
+const userMessageRouter=require("./routers/userMessageRouter");
 
 const PORT=process.env.PORT ||3000;
 const PORT2=process.env.PORT2 ||4000;
@@ -26,6 +27,7 @@ app.use('/public', express.static('public'));
 
 app.use("/api/users",usersRouter);
 app.use("/api/userpages",userPagesRouter);
+app.use("/api/messagepage",userMessageRouter);
 
 
 server.listen(PORT,()=>{
