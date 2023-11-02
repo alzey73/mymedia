@@ -43,13 +43,21 @@ function fetchUserMessages() {
 }
 
 function sendMessage() {
+    const token = localStorage.getItem('token');
+    const decodedToken = decodeToken(token);
+    const currentUserId = decodedToken.userId;
+
     const messageInput = document.getElementById('messageInput');
     const messageText = messageInput.value;
+    const userSelect = document.getElementById('userSelect');
+    const selectedUserId = userSelect.value;
+
     if (messageText.trim() === '') return;
 
     socket.emit('sendMessage', {
         text: messageText,
-        receiver: 'Alıcının_IDsi' // Bu kısmı dinamik olarak seçilen kullanıcıya göre ayarlamalısınız.
+        sender:currentUserId,
+        receiver: selectedUserId
     });
 
     messageInput.value = '';

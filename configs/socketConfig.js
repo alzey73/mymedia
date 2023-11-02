@@ -15,6 +15,7 @@ module.exports = (server) => {
 
         // Kullanıcının mesaj göndermesi
         socket.on('sendMessage', (message) => {
+            console.log("Received message:", message);
             // Mesajı veritabanına kaydet
             const newMessage = new Message({
                 sender: message.sender,
