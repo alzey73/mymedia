@@ -3,19 +3,19 @@ document.getElementById('loginForm').addEventListener('submit', function (e) {
     console.log("Form submitted!");
 
 
-    const socket = io('http://localhost:3000');
+    // const socket = io('http://localhost:3000');
 
-    socket.on('connect', function () {
-        console.log('Connected to the server.');
-    });
+    // socket.on('connect', function () {
+    //     console.log('Connected to the server.');
+    // });
 
-    socket.on('disconnect', function (reason) {
-        console.log('Disconnected from the server. Reason:', reason);
-    });
+    // socket.on('disconnect', function (reason) {
+    //     console.log('Disconnected from the server. Reason:', reason);
+    // });
 
-    socket.on('reconnect_attempt', function () {
-        console.log('Attempting to reconnect...');
-    });
+    // socket.on('reconnect_attempt', function () {
+    //     console.log('Attempting to reconnect...');
+    // });
 
 
     const email = document.getElementById('email').value;
