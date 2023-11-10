@@ -7,21 +7,27 @@ exports.getUserMessages = async (req, res) => {
     try {
         const userId = req.user.userId; // JWT middleware ile eklenen user bilgisi
         const messages = await Message.find({ participants: userId });
-       
+
         if (messages.length === 0) {
             return res.status(200).json({ message: "No messages found for this user.", messages: [] });
-        } 
-    
-        // kullanıcının tüm sohbet dosyalarını oku
-        let allMessages=[];
-        for(let message of messages){
-            const chatContent=fs.readFileSync(message.chatFilePath,"utf8");
-            allMessages.push({
-                sender:message._id,
-                text:chatContent
+        }
+
+        // kullanıcının tüm sohbet dosyalarını oku ve satır satır ayır
+        let allMessages = [];
+        for (let message of messages) {
+            const chatContent = fs.readFileSync(message.chatFilePath, "utf8");
+            const chatLines = chatContent.split('\n'); // Satırlara ayır
+            chatLines.forEach((line) => {
+                if (line) {
+                    allMessages.push({
+                        sender: message._id,
+                        text: chatContent
+                    });
+                }
+
             });
 
-           // console.log(allMessages);
+            // console.log(allMessages);
         }
         res.status(200).json(allMessages);
     } catch (error) {
