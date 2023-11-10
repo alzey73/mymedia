@@ -29,6 +29,7 @@ function fetchUserMessages() {
         .then(data => {
             console.log("Data received from server:", data);
             const messagesData = data;
+            console.log("message",messagesData);
             if (messagesData && messagesData.length > 0) {
                 const messagesDiv = document.getElementById('messages');
                 messagesData.forEach(message => {

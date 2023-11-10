@@ -20,6 +20,8 @@ exports.getUserMessages = async (req, res) => {
                 sender:message._id,
                 text:chatContent
             });
+
+           // console.log(allMessages);
         }
         res.status(200).json(allMessages);
     } catch (error) {
