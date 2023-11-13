@@ -21,7 +21,7 @@ exports.getUserMessages = async (req, res) => {
                 if (line) {
                     allMessages.push({
                         sender: message._id,
-                        text: chatContent
+                        text: line
                     });
                 }
 
@@ -33,5 +33,28 @@ exports.getUserMessages = async (req, res) => {
     } catch (error) {
         res.status(500).send(error.message);
     }
+};
+
+exports.sendMessages = async (req, res) => {
+try {
+    console.log("ss");
+    const {text,sender,receiver}=req.body;
+    //socket.emit('sendMessage', {
+        const newMessage= new Message({
+        text,
+        sender,
+        receiver
+    });
+
+    console.log(newMessage);
+
+    const savedMessage=await newMessage.save();
+
+    res.status(200).send({message:"Message sent",data:savedMessage});
+} 
+    catch (error) {
+        console.error(error);  // Hata detaylarını yazdır
+        res.status(500).send(error.message);
+}
 };
 

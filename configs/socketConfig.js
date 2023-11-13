@@ -50,6 +50,7 @@ module.exports = (server) => {
             
                 // Mesajı diğer kullanıcıya ilet
                 socket.broadcast.emit('messageReceived', message);
+                
             });
 
         socket.on("disconnect", () => {

@@ -13,6 +13,7 @@ socket.on('messageReceived', function (message) {
 });
 function fetchUserMessages() {
     console.log("fetchUserMessages function is called");
+    console.log("w");
     const token = localStorage.getItem("token");
     fetch('http://localhost:3000/api/messagepage', {  // API endpoint'inizi buraya yazın
         method: 'GET',
@@ -29,7 +30,7 @@ function fetchUserMessages() {
         .then(data => {
             console.log("Data received from server:", data);
             const messagesData = data;
-            console.log("message",messagesData);
+            console.log("message", messagesData);
             if (messagesData && messagesData.length > 0) {
                 const messagesDiv = document.getElementById('messages');
                 messagesData.forEach(message => {
@@ -44,6 +45,7 @@ function fetchUserMessages() {
 }
 
 function sendMessage() {
+    console.log("ww");
     const token = localStorage.getItem('token');
     const decodedToken = decodeToken(token);
     const currentUserId = decodedToken.userId;
@@ -52,16 +54,37 @@ function sendMessage() {
     const messageText = messageInput.value;
     const userSelect = document.getElementById('userSelect');
     const selectedUserId = userSelect.value;
-
+    console.log("www");
     if (messageText.trim() === '') return;
 
-    socket.emit('sendMessage', {
-        text: messageText,
-        sender:currentUserId,
-        receiver: selectedUserId
-    });
+    fetch("http://localhost:3000/api/messagepage/send", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "x-auth-token": token
+        },
+        body: JSON.stringify({
+            text: messageText,
+            sender: currentUserId,
+            receiver: selectedUserId
+        })
 
-    messageInput.value = '';
+       
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("Message sending failed " + response.statusText);
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log("Tmessage sent: ",data)
+            messageInput.value = '';
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            document.getElementById("ss").innerText = error.message;
+        });
 }
 
 function decodeToken(token) {
@@ -80,7 +103,7 @@ function fetchUsers() {
     const token2 = localStorage.getItem('token');
     const decodedToken = decodeToken(token2);
     const currentUserId = decodedToken.userId;
-
+    console.log("w");
     fetch('http://localhost:3000/api/users')
         .then(response => response.json())
         .then(users => {
