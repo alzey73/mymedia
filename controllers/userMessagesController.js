@@ -2,11 +2,15 @@
 
 const Message = require("../Models/messageModel");
 const fs = require("fs");
+const path = require('path');
+const mongoose = require("mongoose");
+const { sendMessage } = require('../configs/socketConfig');
 
 exports.getUserMessages = async (req, res) => {
     try {
         const userId = req.user.userId; // JWT middleware ile eklenen user bilgisi
-        const messages = await Message.find({ participants: userId });
+        const messages = await Message.find({ participants: userId })
+            .populate("participants", "email");
 
         if (messages.length === 0) {
             return res.status(200).json({ message: "No messages found for this user.", messages: [] });
@@ -20,14 +24,16 @@ exports.getUserMessages = async (req, res) => {
             chatLines.forEach((line) => {
                 if (line) {
                     allMessages.push({
-                        sender: message._id,
+                        //sender: message.participants[0].email,
+                        sender: message.participants[0],
+                        receiver: message.participants[1],
                         text: line
                     });
                 }
 
             });
 
-            // console.log(allMessages);
+            console.log(allMessages);
         }
         res.status(200).json(allMessages);
     } catch (error) {
@@ -36,25 +42,40 @@ exports.getUserMessages = async (req, res) => {
 };
 
 exports.sendMessages = async (req, res) => {
-try {
-    console.log("ss");
-    const {text,sender,receiver}=req.body;
-    //socket.emit('sendMessage', {
-        const newMessage= new Message({
-        text,
-        sender,
-        receiver
-    });
+    try {
+        //console.log("ss");
+        const { text, sender, receiver } = req.body;
+        // const chatId = [sender, receiver].sort().join("_");
+        // const chatFilePath = path.join(__dirname, "../../public/chat", `chat_${chatId}.txt`);
 
-    console.log(newMessage);
+        // var olan sohbeti bul veya yeni bir tane oluştur
 
-    const savedMessage=await newMessage.save();
+        // let message = await Message.findOne({ chatId });
+        // if (message) {
+        //     // sohbet zaten var, sadece son mesajı güncelle
+        //     message.lastMessage = text;
+        //     message.lastMessageTime = new Date();
 
-    res.status(200).send({message:"Message sent",data:savedMessage});
-} 
+        //     const updatedMassage = await message.save();
+        //     res.status(200).send({ message: "Message sent", data: updatedMassage });
+
+
+        // } else {
+        
+            const message = {
+                text,
+                sender,
+                receiver
+            };
+            
+            await sendMessage(message);
+            
+            res.status(200).send({ message: "Message sent", data: message });
+        }
+    
     catch (error) {
         console.error(error);  // Hata detaylarını yazdır
         res.status(500).send(error.message);
-}
+    }
 };
 

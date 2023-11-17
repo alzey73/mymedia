@@ -9,8 +9,12 @@ socket.on('connect', function () {
 
 socket.on('messageReceived', function (message) {
     const messagesDiv = document.getElementById('messages');
-    messagesDiv.innerHTML += `<p>${message.sender}: ${message.text}</p>`;
+    const messageElement = document.createElement("p");
+    messageElement.textContent = `${message.sender}: ${message.text}`
+    messagesDiv.appendChild(messageElement);
 });
+
+
 function fetchUserMessages() {
     console.log("fetchUserMessages function is called");
     console.log("w");
@@ -34,7 +38,12 @@ function fetchUserMessages() {
             if (messagesData && messagesData.length > 0) {
                 const messagesDiv = document.getElementById('messages');
                 messagesData.forEach(message => {
-                    messagesDiv.innerHTML += `<p>${message.sender}: ${message.text}</p>`;
+                    const parts = message.text.split(': ');
+                    const senderId = parts[0];
+                    const messageText = parts.slice(1).join(': ');
+                    //console.log(senderId);
+                    //console.log(messageText);
+                    messagesDiv.innerHTML += `<p>${senderId === message.sender._id ? message.sender.email : message.receiver.email}: ${messageText} </p>`;
                 });
             }
         })
@@ -45,7 +54,7 @@ function fetchUserMessages() {
 }
 
 function sendMessage() {
-    console.log("ww");
+    //console.log("ww");
     const token = localStorage.getItem('token');
     const decodedToken = decodeToken(token);
     const currentUserId = decodedToken.userId;
@@ -54,7 +63,7 @@ function sendMessage() {
     const messageText = messageInput.value;
     const userSelect = document.getElementById('userSelect');
     const selectedUserId = userSelect.value;
-    console.log("www");
+    // console.log("www");
     if (messageText.trim() === '') return;
 
     fetch("http://localhost:3000/api/messagepage/send", {
@@ -69,7 +78,7 @@ function sendMessage() {
             receiver: selectedUserId
         })
 
-       
+
     })
         .then(response => {
             if (!response.ok) {
@@ -78,7 +87,7 @@ function sendMessage() {
             return response.json();
         })
         .then(data => {
-            console.log("Tmessage sent: ",data)
+            console.log("message sent: ", data)
             messageInput.value = '';
         })
         .catch(error => {
@@ -96,7 +105,24 @@ function decodeToken(token) {
         console.error('Token decode error:', e);
         return null;
     }
-}
+};
+
+function sendMessage2() {
+    const token = localStorage.getItem('token');
+    const decodedToken = decodeToken(token);
+    const currentUserId = decodedToken.userId;
+
+    const messageInput = document.getElementById('messageInput');
+    const messageText = messageInput.value;
+    const userSelect = document.getElementById('userSelect');
+    const selectedUserId = userSelect.value;
+
+    socket.emit("sendMessage", {
+        text: messageText,
+        sender: currentUserId,
+        receiver: selectedUserId
+    });
+};
 
 function fetchUsers() {
 
