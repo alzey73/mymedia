@@ -13,6 +13,8 @@ const usersRouter=require("./routers/usersRouter");
 const userPagesRouter=require("./routers/userPagesRouter");
 const userMessageRouter=require("./routers/userMessageRouter");
 
+const fetchCurrencyData=require("./controllers/TCMBController");
+
 const PORT=process.env.PORT ||3000;
 const PORT2=process.env.PORT2 ||4000;
 
@@ -30,6 +32,7 @@ app.use("/api/users",usersRouter);
 app.use("/api/userpages",userPagesRouter);
 app.use("/api/messagepage",userMessageRouter);
 
+fetchCurrencyData();
 
 server.listen(PORT,()=>{
     console.log(`Server (with socket.io) is running on port ${PORT}`);
