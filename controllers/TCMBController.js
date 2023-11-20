@@ -1,27 +1,21 @@
-const axios=require("axios");
+const axios = require("axios");
 
-// API URL'sini ve parametrelerini oluşturun
+exports.getTCMB = async (req, res) => {
+    try {
 
-const fetchCurrencyData=()=>{
+        const baseURL = "https://evds2.tcmb.gov.tr/service/evds/";
+        const { series, startDate, endDate } = req.query;
+        const apiKey = process.env.TCMB_API_KEY; 
+        const url = `${baseURL}series=${series}&startDate=${startDate}&endDate=${endDate}&type=json&key=${apiKey}`;
 
-const baseURL = "https://evds2.tcmb.gov.tr/service/evds/";
-const series = "TP.DK.USD.A.YTL"; // Döviz serisi kodu
-const startDate = "01-01-2023";
-const endDate = "31-01-2023";
-const apiKey = process.env.TCMB_API_KEY; // API anahtarınız
-const url = `${baseURL}series=${series}&startDate=${startDate}&endDate=${endDate}&type=json&key=${apiKey}`;
-
-console.log(url);
-
-// Axios ile GET isteği yapın
-axios.get(url)
-.then(response=>{
-    console.log(response.data);
-})
-.catch(err=>{
-    console.error("Hata: ",err);
-});
-
-}
-
-module.exports=fetchCurrencyData;
+        if (!series || !startDate || !endDate) {
+            return res.status(400).send("The series, startDate, and endDate parameters are required.");
+        }
+        const response = await axios.get(url);
+        res.json(response.data);
+    }
+    catch (err) {
+        console.error("Error : ",err);
+        res.status(500).send(err.message);
+    }
+};

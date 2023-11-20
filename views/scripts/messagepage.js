@@ -129,7 +129,7 @@ function fetchUsers() {
     const token2 = localStorage.getItem('token');
     const decodedToken = decodeToken(token2);
     const currentUserId = decodedToken.userId;
-    console.log("w");
+   
     fetch('http://localhost:3000/api/users')
         .then(response => response.json())
         .then(users => {

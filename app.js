@@ -12,6 +12,7 @@ const initializeSockets=require("./configs/socketConfig");
 const usersRouter=require("./routers/usersRouter");
 const userPagesRouter=require("./routers/userPagesRouter");
 const userMessageRouter=require("./routers/userMessageRouter");
+const userTCMBRouter=require("./routers/userTCMBRouter")
 
 const fetchCurrencyData=require("./controllers/TCMBController");
 
@@ -31,8 +32,7 @@ app.use('/public', express.static('public'));
 app.use("/api/users",usersRouter);
 app.use("/api/userpages",userPagesRouter);
 app.use("/api/messagepage",userMessageRouter);
-
-fetchCurrencyData();
+app.use("/api/currency",userTCMBRouter);
 
 server.listen(PORT,()=>{
     console.log(`Server (with socket.io) is running on port ${PORT}`);

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Currency Data Form</title>
+</head>
+
+<body>
+
+    <h1>Currency Data Request</h1>
+    <form action="http://localhost:3000/api/currency" method="get">
+        <label for="series">Series</label>
+        <!-- <input type="text" id="series" name="series" placeholder="TP.DK.USD.A.YTL" required> -->
+
+        <select id="series" name="series">
+            <option value="TP.DK.USD.A">ABD Doları (Döviz Alış)</option>
+            <option value="TP.DK.EUR.A">Euro (Döviz Alış)</option>
+            <option value="TP.DK.CHF.A">İsviçre Frangı (Döviz Alış)</option>
+            <option value="TP.DK.GBP.A">İngiliz Sterlini (Döviz Alış)</option>
+            <option value="TP.DK.JPY.A">Japon Yeni (Döviz Alış)</option>
+        </select>
+
+        <label for="startDate">Start Date (gg-aa-yyyy):</label>
+        <input type="text" id="startDate" name="startDate" placeholder="gg-aa-yyyy" required pattern="(0[1-9]|[12][0-9]|3[01])-(0[0-9]|1[0-2])-(19\d\d|20\d\d)"
+            title="Yanlış tarih girildi">
+        <br><br>
+
+        <label for="endDate">End Date (gg-aa-yyyy):</label>
+        <input type="text" id="endDate" name="endDate" placeholder="gg-aa-yyyy" required pattern="(0[1-9]|[12][0-9]|3[01])-(0[0-9]|1[0-2])-(19\d\d|20\d\d)"
+        title="Yanlış tarih girildi">
+        <br><br>
+
+        <input type="submit" value="Get Data">
+
+    </form>
+
+    <div id="currencyData"> </div>
+
+    <script src="dataDisplay.js"></script>
+</body>
+
+</html>
