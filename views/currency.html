@@ -2,15 +2,49 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Bootstrap CSS -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" />
+
+    <!-- Bootstrap JS, Popper.js, and jQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <title>Currency Data Form</title>
 </head>
 
 <body>
 
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a class="navbar-brand" href="#">My App</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="user.html">Login</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="userpage.html">User Page</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="userupload.html">Upload</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="messagePage.html">Messages</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="currency.html">Currency</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
     <h1>Currency Data Request</h1>
-    <form action="http://localhost:3000/api/currency" method="get">
+    <form id="currencyForm" action="http://localhost:3000/api/currency" method="get">
         <label for="series">Series</label>
         <!-- <input type="text" id="series" name="series" placeholder="TP.DK.USD.A.YTL" required> -->
 
@@ -21,24 +55,47 @@
             <option value="TP.DK.GBP.A">İngiliz Sterlini (Döviz Alış)</option>
             <option value="TP.DK.JPY.A">Japon Yeni (Döviz Alış)</option>
         </select>
+        <br>
+
+        <label for="timeInterval">Zaman Aralığı:</label>
+        <select id="timeInterval" name="timeInterval">
+            <option value="1">Günlük</option>
+            <option value="2">İş Günü</option>
+            <option value="3">Haftalık</option>
+            <option value="4">Ayda 2 kez</option>
+            <option value="5">Aylık</option>
+            <option value="6">3 Aylık</option>
+            <option value="7">6 Aylık</option>
+            <option value="8">Yıllık</option>
+        </select>
+        <br>
+
 
         <label for="startDate">Start Date (gg-aa-yyyy):</label>
-        <input type="text" id="startDate" name="startDate" placeholder="gg-aa-yyyy" required pattern="(0[1-9]|[12][0-9]|3[01])-(0[0-9]|1[0-2])-(19\d\d|20\d\d)"
-            title="Yanlış tarih girildi">
+        <input type="text" id="startDate" name="startDate" placeholder="gg-aa-yyyy" required
+            pattern="(0[1-9]|[12][0-9]|3[01])-(0[0-9]|1[0-2])-(19\d\d|20\d\d)" title="Yanlış tarih girildi">
         <br><br>
 
         <label for="endDate">End Date (gg-aa-yyyy):</label>
-        <input type="text" id="endDate" name="endDate" placeholder="gg-aa-yyyy" required pattern="(0[1-9]|[12][0-9]|3[01])-(0[0-9]|1[0-2])-(19\d\d|20\d\d)"
-        title="Yanlış tarih girildi">
+        <input type="text" id="endDate" name="endDate" placeholder="gg-aa-yyyy" required
+            pattern="(0[1-9]|[12][0-9]|3[01])-(0[0-9]|1[0-2])-(19\d\d|20\d\d)" title="Yanlış tarih girildi">
         <br><br>
 
         <input type="submit" value="Get Data">
 
     </form>
+    <div id="chartContainer" style="width: 700px;height: 400px;">
+        <canvas id="myChart" width="100" height="100"></canvas>
+
+    </div>
 
     <div id="currencyData"> </div>
 
-    <script src="dataDisplay.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="scripts/dataDisplay.js"></script>
+
+
 </body>
 
 </html>
