@@ -1,35 +1,18 @@
 // upload.js
-document.querySelector('form').addEventListener('submit', function(e) {
+requireLogin();
+
+document.querySelector('form').addEventListener('submit', async function (e) {
     e.preventDefault();
 
-    const token = localStorage.getItem("token");
-    if (!token) {
-        alert("You are not logged in!");
-        return;
-    }
-
-    const formData = new FormData(e.target);
-
-    fetch('http://localhost:3000/api/userpages/upload', {
-        method: 'POST',
-        headers: {
-            'x-auth-token': token
-        },
-        body: formData
-    })
-    .then(response =>{
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        return response.json();
-    })
-    .then(data => {
-        if (data.message) {
-            alert(data.message);
-        }
-    })
-    .catch(error => {
+    try {
+        const data = await apiFetch('/api/userpages/upload', {
+            method: 'POST',
+            body: new FormData(e.target)
+        });
+        alert(data.message);
+        e.target.reset();
+    } catch (error) {
         console.error('Error:', error);
-        alert('An error occurred while uploading the file.');
-    });
+        alert('Upload failed: ' + error.message);
+    }
 });

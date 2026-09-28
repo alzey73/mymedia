@@ -1,0 +1,6 @@
+node_modules/
+.env
+
+# Kullanıcı yüklemeleri repoya girmez
+public/*
+!public/.gitkeep

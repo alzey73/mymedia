@@ -1,63 +1,56 @@
 const socketIo = require("socket.io");
+const mongoose = require("mongoose");
 const Message = require("../Models/messageModel");
-const fs = require("fs");
-const path = require("path");
-//const { v4: uuidv4 } = require("uuid");
+const User = require("../Models/usersModel");
+const { verifyToken } = require("../middlewares/authenticateJWT");
 
-module.exports = (server) => {
+module.exports = (server, corsOrigin) => {
     const io = socketIo(server, {
         cors: {
-            origin: "*",  // Tüm kökenlere izin verir. İhtiyacınıza göre bu değeri değiştirebilirsiniz.
+            origin: corsOrigin,
             methods: ["GET", "POST"]
         }
     });
 
-
-    io.on("connection", (socket) => {
-        console.log("Someone connected : ", socket.id);
-
-        // Kullanıcının mesaj göndermesi
-        socket.on('sendMessage', async (message) => {
-            console.log("Received message:", message);
-
-            // sohbet dosyasının yolunu oluştur
-            const participants = [message.sender, message.receiver].sort();
-            const chatId = participants.join("_");
-            const chatFilePath = path.join(__dirname, "..", "public", "chats", `chat_${chatId}.txt`);
-
-            //mesajı dosyaya ekle
-            fs.appendFileSync(chatFilePath, `${message.sender}: ${message.text}\n`);
-
-
-            // Veritabanında sohbet yolu var mı diye kontrol et
-            let chat = await Message.findOne({ chatId: chatId });
-            if (!chat) {
-                // Eğer yoksa yeni bir kayıt oluştur
-                chat = new Message({
-                    chatId: chatId,
-                    participants: participants,
-                    chatFilePath: chatFilePath,
-                    lastMessage:message.text,
-                    lastMessageTime: new Date()// Son mesajın zamanını da kaydedebilirsiniz
-                });
-                
-            }else{
-                // Eğer varsa, son mesaj bilgilerini güncelle
-                chat.lastMessage=message.text;
-                chat.lastMessageTime=new Date();
-            }
-            await chat.save();
-            
-                // Mesajı diğer kullanıcıya ilet
-                socket.broadcast.emit('messageReceived', message);
-            });
-
-        socket.on("disconnect", () => {
-            console.log("user disconnected : ", socket.id);
-        });
-
-
+    // Bağlantı sırasında JWT doğrulaması
+    io.use((socket, next) => {
+        try {
+            const decoded = verifyToken(socket.handshake.auth && socket.handshake.auth.token);
+            socket.userId = String(decoded.userId);
+            next();
+        } catch (err) {
+            next(new Error("Unauthorized"));
+        }
     });
 
-    return io;// Eğer başka yerlerde io nesnesine ihtiyaç duyarsanız.
+    io.on("connection", (socket) => {
+        // Her kullanıcı kendi odasına katılır; mesajlar sadece ilgili odalara gönderilir
+        socket.join(socket.userId);
+
+        socket.on('sendMessage', async (message, ack) => {
+            const reply = typeof ack === "function" ? ack : () => {};
+            try {
+                const text = message && typeof message.text === "string" ? message.text.trim() : "";
+                const receiver = message && message.receiver;
+
+                if (!text || text.length > 2000) {
+                    return reply({ ok: false, error: "Message must be 1-2000 characters" });
+                }
+                if (!mongoose.isValidObjectId(receiver) || !(await User.exists({ _id: receiver }))) {
+                    return reply({ ok: false, error: "Invalid receiver" });
+                }
+
+                // Gönderen, istemcinin söylediği değil token'daki kullanıcıdır
+                const saved = await Message.create({ sender: socket.userId, receiver, text });
+
+                io.to(String(receiver)).to(socket.userId).emit('messageReceived', saved.toJSON());
+                reply({ ok: true });
+            } catch (err) {
+                console.error("sendMessage error:", err);
+                reply({ ok: false, error: "Internal server error" });
+            }
+        });
+    });
+
+    return io;
 };

@@ -3,7 +3,7 @@ const router=express.Router();
 const upload=require("../configs/multerConfig")
 
 const authenticateJWT = require('../middlewares/authenticateJWT');
-const userPagesController=require("../controllers/useragesController")
+const userPagesController=require("../controllers/userPagesController")
 
 
 router.get("/userpage", authenticateJWT, userPagesController.getUserFiles);
