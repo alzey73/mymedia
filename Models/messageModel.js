@@ -1,28 +1,26 @@
 const mongoose = require('mongoose');
 
+// Her mesaj ayrı bir doküman olarak tutulur
 const messageSchema = new mongoose.Schema({
-  chatId: {
+  sender: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
+  },
+  receiver: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
+  },
+  text: {
     type: String,
     required: true,
-    unique: true // Her sohbet için benzersiz bir chatId olmalı
-  },
-  participants: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User'
-  }],
-  chatFilePath: {
-    type: String,
-    required: true
-  },
-  lastMessage: {
-    type: String,
-    required: true
-  },
-  lastMessageTime: {
-    type: Date,
-    default: Date.now
+    trim: true,
+    maxlength: 2000
   }
 }, { timestamps: true }); // createdAt ve updatedAt alanlarını otomatik olarak ekler
+
+messageSchema.index({ sender: 1, receiver: 1, createdAt: 1 });
 
 const Message = mongoose.model('Message', messageSchema);
 

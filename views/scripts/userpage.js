@@ -1,76 +1,50 @@
+function renderFile(file) {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'mb-4';
 
-function fetchUserFiles() {
-    console.log("fetchUserFiles function is called");
-    const token = localStorage.getItem("token");
-    fetch('http://localhost:3000/api/userpages/userpage', {
-        method: 'GET',
-        headers: {
-            //'Authorization': 'Bearer ' + token
-            'x-auth-token': token
-        }
+    const title = document.createElement('h3');
+    title.textContent = file.description || '';
+    wrapper.appendChild(title);
 
-        
-    })
-    .then(response => {
-        // Yanıt başarılı değilse hata fırlat
-        console.log("Response received:", response);
-        if (!response.ok) {
-            throw new Error(response.statusText);
-        }
-        
-        return response.json();
-    })
-    .then(data => {
-        console.log("Data received from server:", data);
-        // Eğer data içerisinde bir message varsa, bu mesajı #ss elementine yazdır
-        if (data.message) {
-            document.getElementById("ss").innerText = data.message;
-        }
+    let media;
+    if (file.type === "video") {
+        media = document.createElement('video');
+        media.controls = true;
+        media.width = 320;
+        media.height = 240;
+        media.src = file.path;
+    } else if (file.type === "image") {
+        media = document.createElement('img');
+        media.style.maxWidth = '320px';
+        media.alt = file.description || '';
+        media.src = file.path;
+    } else {
+        return null;
+    }
+    wrapper.appendChild(media);
+    return wrapper;
+}
 
-        // Eğer data içerisinde dosyalar varsa, bu dosyaları #userData elementine yazdır
-        const filesData = data; // data'nın ilk elemanını al
-        // console.log("data files :",filesData);
-        // console.log("data lenght :",data.length);
-        if (filesData && filesData.length > 0) {
-            //console.log("data files :",data.files);
-            
-            const filesDiv = document.getElementById('userData');
-            filesData.forEach(file => {
-                if (file.type === "video") {
-                    filesDiv.innerHTML += `
-                        <h3>${file.description}</h3>
-                        <video width="320" height="240" controls>
-                            <source src="${file.path}" type="video/mp4">
-                            Tarayıcınız video etiketini desteklemiyor.
-                        </video>
-                    `;
-                } else if (file.type === "image") {
-                    // Eğer dosya tipi resimse, burada resim gösterimi için kodları ekleyebilirsiniz.
-                } else {
-                    // Diğer dosya tipleri için burada kodları ekleyebilirsiniz.
-                }
-            });
-            
+async function fetchUserFiles() {
+    const status = document.getElementById("ss");
+    try {
+        const files = await apiFetch('/api/userpages/userpage');
+        const filesDiv = document.getElementById('userData');
+
+        if (files.length === 0) {
+            status.textContent = "No files found for this user.";
+            return;
         }
-    })
-    .catch(error => {
+        files.forEach(file => {
+            const el = renderFile(file);
+            if (el) filesDiv.appendChild(el);
+        });
+    } catch (error) {
         console.error('Error:', error);
-        document.getElementById("ss").innerText = error.message;
-    });
+        status.textContent = error.message;
+    }
 }
 
-// Sayfa yüklendiğinde çalışacak fonksiyon
-window.onload = function() {
-    // localStorage'dan token'ı al
-    const token = localStorage.getItem("token");
-    
-    // Konsola token'ı yazdır
-   // console.log("Token:", token);
-    
-    // ... diğer işlemleriniz
+if (requireLogin()) {
+    fetchUserFiles();
 }
-
-
-
-
-fetchUserFiles();

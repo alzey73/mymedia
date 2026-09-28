@@ -28,7 +28,7 @@
                     <a class="nav-link" href="userpage.html">User Page</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="userupload.html">Upload</a>
+                    <a class="nav-link" href="userUpload.html">Upload</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="messagePage.html">Messages</a>
@@ -39,15 +39,6 @@
     <div class="container mt-5">
     <h2>Upload File</h2>
     <form action="/api/userpages/upload" method="post" enctype="multipart/form-data">
-        <!-- Dosya türünü seçmek için bir dropdown -->
-        <label for="type">File Type:</label>
-        <select name="type" id="type" required>
-            <option value="video">Video</option>
-            <option value="image">Image</option>
-            <option value="message">Message</option>
-        </select>
-        <br><br>
-
         <!-- Dosya açıklaması için bir input alanı -->
         <label for="description">Description:</label>
         <input type="text" id="description" name="description">
@@ -55,12 +46,13 @@
 
         <!-- Dosya yüklemek için bir file input alanı -->
         <label for="file">Choose a file:</label>
-        <input type="file" id="file" name="file" required>
+        <input type="file" id="file" name="file" accept="video/mp4,video/webm,image/jpeg,image/png,image/gif,image/webp" required>
         <br><br>
 
         <input type="submit" value="Upload">
     </form>
 </div>
+    <script src="scripts/common.js"></script>
     <script src="scripts/upload.js"></script>
 </body>
 </html>
